@@ -33,12 +33,10 @@ jobs:
           ln -sf "$XCODE_SDK" "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
 
       - name: Build Package
-        env:
-          THEOS: ${{ env.THEOS }}
         run: |
           export THEOS=$HOME/theos
           export PATH=$THEOS/bin:$PATH
-          make package FINALPACKAGE=1
+          $THEOS/bin/make package FINALPACKAGE=1
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
