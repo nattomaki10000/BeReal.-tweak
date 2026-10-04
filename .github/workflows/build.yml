@@ -46,8 +46,6 @@ jobs:
           export THEOS_MAKE_PATH=$HOME/theos/makefiles
           export PATH=$HOME/theos/bin:$PATH
           export PERL5LIB=$HOME/theos/lib:$PERL5LIB
-          ls -l "$HOME/theos/bin/dm.pl"
-          ls -l "$HOME/theos/vendor/dm.pl/dm.pl"
           make package FINALPACKAGE=1
 
       - name: Upload Artifacts
