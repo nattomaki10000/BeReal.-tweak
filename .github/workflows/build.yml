@@ -53,5 +53,5 @@ jobs:
         with:
           name: BeRealCompatTweak-Build
           path: |
-            .theos/obj/
-            *.deb
+            packages/*.deb
+            .theos/obj/*.dylib
