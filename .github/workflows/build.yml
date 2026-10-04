@@ -23,7 +23,8 @@ jobs:
 
       - name: Set up Theos
         run: |
-          git clone --depth=1 https://github.com/theos/theos.git "$HOME/theos"
+          git clone --recursive --depth=1 https://github.com/theos/theos.git "$HOME/theos"
+          git -C "$HOME/theos" submodule update --init --recursive || true
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
           echo "THEOS_MAKE_PATH=$HOME/theos/makefiles" >> "$GITHUB_ENV"
           echo "$HOME/theos/bin:$PATH" >> "$GITHUB_PATH"
@@ -46,6 +47,12 @@ jobs:
           export THEOS_MAKE_PATH=$HOME/theos/makefiles
           export PATH=$HOME/theos/bin:$PATH
           export PERL5LIB=$HOME/theos/lib:$PERL5LIB
+
+          ls -l "$HOME/theos/bin" || true
+          ls -l "$HOME/theos/vendor/dm.pl" || true
+          test -f "$HOME/theos/bin/dm.pl" || exit 1
+          test -f "$HOME/theos/vendor/dm.pl/dm.pl" || exit 1
+
           make package FINALPACKAGE=1
 
       - name: Upload Artifacts
