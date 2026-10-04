@@ -18,7 +18,7 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          brew install xz dpkg
+          brew install xz dpkg perl
 
       - name: Set up Theos
         run: |
@@ -33,7 +33,11 @@ jobs:
           ln -sf "$XCODE_SDK" "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
 
       - name: Build Package
+        env:
+          THEOS: ${{ env.THEOS }}
         run: |
+          export THEOS=$HOME/theos
+          export PATH=$THEOS/bin:$PATH
           make package FINALPACKAGE=1
 
       - name: Upload Artifacts
