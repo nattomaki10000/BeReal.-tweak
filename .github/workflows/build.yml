@@ -1,0 +1,45 @@
+name: Build BeRealCompatTweak
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14 # Xcode環境が利用可能なmacOSランナーを使用
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install System Dependencies
+      run: |
+        brew install lzma standard-keysets xz
+
+    - name: Set up Theos
+      run: |
+        bash -c "$(curl -fsSL https://githubusercontent.com)"
+        echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+        
+    - name: Set up iOS SDK
+      run: |
+        # Theos用のiOS SDK（例: 16.5など）をダウンロードして配置
+        git clone --depth 1 https://github.com $HOME/theos/sdks
+
+    - name: Build Package
+      run: |
+        # READMEのディレクトリ構造に合わせて移動してビルド
+        cd BeRealCompatTweak
+        make package FINALPACKAGE=1
+        
+    - name: Upload Artifacts
+      uses: actions/artifacts-upload@v4
+      with:
+        name: BeRealCompatTweak-Build
+        path: |
+          BeRealCompatTweak/.theos/obj/
+          BeRealCompatTweak/*.deb
