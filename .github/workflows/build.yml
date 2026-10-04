@@ -18,21 +18,22 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          brew update
-          brew install make lzma xz
+          brew install xz
 
       - name: Set up Theos
         run: |
           git clone --depth=1 https://github.com/theos/theos.git "$HOME/theos"
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
+          echo "$HOME/theos/bin:$PATH" >> "$GITHUB_PATH"
 
       - name: Set up iOS SDK
         run: |
-          echo "SDKROOT=$(xcrun --sdk iphoneos --show-sdk-path)" >> "$GITHUB_ENV"
+          mkdir -p "$HOME/theos/sdks"
+          XCODE_SDK=$(xcrun --sdk iphoneos --show-sdk-path)
+          ln -sf "$XCODE_SDK" "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
 
       - name: Build Package
         run: |
-          cd BeRealCompatTweak
           make package FINALPACKAGE=1
 
       - name: Upload Artifacts
@@ -40,5 +41,5 @@ jobs:
         with:
           name: BeRealCompatTweak-Build
           path: |
-            BeRealCompatTweak/.theos/obj/
-            BeRealCompatTweak/*.deb
+            .theos/obj/
+            *.deb
