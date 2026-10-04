@@ -1,6 +1,7 @@
 #import <dlfcn.h>
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
+#import <substrate.h>
 
 BOOL IsSymbolsPath(const char *path) {
     if (!path) return NO;
@@ -12,8 +13,6 @@ static void *(*orig_dlopen)(const char *path, int mode);
 
 void *Hooked_dlopen(const char *path, int mode) {
     if (IsSymbolsPath(path)) {
-        // Return a valid handle to an existing system library so the app can continue.
-        // This is a compatibility shim for a missing private framework on older iOS builds.
         void *handle = dlopen("/usr/lib/libobjc.A.dylib", mode);
         if (handle) return handle;
         handle = dlopen("/usr/lib/libSystem.B.dylib", mode);
