@@ -24,7 +24,7 @@ jobs:
         run: |
           git clone --depth=1 https://github.com/theos/theos.git "$HOME/theos"
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
-          echo "$HOME/theos/bin:$PATH" >> "$GITHUB_PATH"
+          echo "THEOS_MAKE_PATH=$HOME/theos/makefiles" >> "$GITHUB_ENV"
 
       - name: Set up iOS SDK
         run: |
@@ -33,10 +33,13 @@ jobs:
           ln -sf "$XCODE_SDK" "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
 
       - name: Build Package
+        env:
+          THEOS: ${{ env.THEOS }}
+          THEOS_MAKE_PATH: ${{ env.THEOS_MAKE_PATH }}
         run: |
           export THEOS=$HOME/theos
-          export PATH=$THEOS/bin:$PATH
-          $THEOS/bin/make package FINALPACKAGE=1
+          export THEOS_MAKE_PATH=$HOME/theos/makefiles
+          make package FINALPACKAGE=1
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
