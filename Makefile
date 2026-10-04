@@ -7,6 +7,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = SymbolsStub
 SymbolsStub_FILES = Tweak.xm
 SymbolsStub_FRAMEWORKS = Foundation UIKit
+SymbolsStub_PRIVATE_FRAMEWORKS = CydiaSubstrate
 SymbolsStub_LDFLAGS += -lobjc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
