@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-14
 
     steps:
       - name: Checkout repository
@@ -16,10 +16,9 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Linux build dependencies
+      - name: Install build dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential curl git perl dpkg-dev clang lzma xz-utils
+          brew install xz dpkg perl
 
       - name: Set up Theos
         run: |
@@ -27,15 +26,15 @@ jobs:
           git -C "$HOME/theos" submodule update --init --recursive || true
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
           echo "THEOS_MAKE_PATH=$HOME/theos/makefiles" >> "$GITHUB_ENV"
-          echo "$HOME/theos/bin:$PATH" >> "$GITHUB_PATH"
           echo "PERL5LIB=$HOME/theos/lib:$PERL5LIB" >> "$GITHUB_ENV"
+          echo "$HOME/theos/bin:$PATH" >> "$GITHUB_PATH"
 
-      - name: Set up iPhone SDK path
+      - name: Set up iOS SDK
         run: |
           mkdir -p "$HOME/theos/sdks"
-          if [ -d /usr/share/iphoneos-sdk ]; then
-            ln -sf /usr/share/iphoneos-sdk "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
-          fi
+          SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
+          ln -sf "$SDK_PATH" "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
+          ls -la "$HOME/theos/sdks"
 
       - name: Build Package
         env:
@@ -47,12 +46,8 @@ jobs:
           export THEOS_MAKE_PATH=$HOME/theos/makefiles
           export PATH=$HOME/theos/bin:$PATH
           export PERL5LIB=$HOME/theos/lib:$PERL5LIB
-
-          ls -l "$HOME/theos/bin" || true
-          ls -l "$HOME/theos/vendor/dm.pl" || true
-          test -f "$HOME/theos/bin/dm.pl" || exit 1
-          test -f "$HOME/theos/vendor/dm.pl/dm.pl" || exit 1
-
+          ls -l "$HOME/theos/bin/dm.pl"
+          ls -l "$HOME/theos/vendor/dm.pl/dm.pl"
           make package FINALPACKAGE=1
 
       - name: Upload Artifacts
