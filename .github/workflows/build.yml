@@ -26,6 +26,8 @@ jobs:
           git clone --depth=1 https://github.com/theos/theos.git "$HOME/theos"
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
           echo "THEOS_MAKE_PATH=$HOME/theos/makefiles" >> "$GITHUB_ENV"
+          echo "$HOME/theos/bin:$PATH" >> "$GITHUB_PATH"
+          echo "PERL5LIB=$HOME/theos/lib:$PERL5LIB" >> "$GITHUB_ENV"
 
       - name: Set up iPhone SDK path
         run: |
@@ -38,9 +40,12 @@ jobs:
         env:
           THEOS: ${{ env.THEOS }}
           THEOS_MAKE_PATH: ${{ env.THEOS_MAKE_PATH }}
+          PERL5LIB: ${{ env.PERL5LIB }}
         run: |
           export THEOS=$HOME/theos
           export THEOS_MAKE_PATH=$HOME/theos/makefiles
+          export PATH=$HOME/theos/bin:$PATH
+          export PERL5LIB=$HOME/theos/lib:$PERL5LIB
           make package FINALPACKAGE=1
 
       - name: Upload Artifacts
