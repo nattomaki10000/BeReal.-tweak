@@ -1,0 +1,8 @@
+{
+    Filter = {
+        Bundles = (
+            "AlexisBarreyat.BeReal.L9WG4DZRTR",
+            "AlexisBarreyat.BeReal"
+        );
+    };
+}
