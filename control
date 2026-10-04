@@ -1,0 +1,8 @@
+Package: com.nattomaki.berealcompat
+Name: BeRealCompatTweak
+Architecture: iphoneos-arm64
+Description: Compatibility shim for missing Symbols.framework on BeReal
+Version: 0.0.1
+Maintainer: nattomaki10000
+Author: nattomaki10000
+Section: Tweaks
