@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -16,9 +16,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install build dependencies
+      - name: Install Linux build dependencies
         run: |
-          brew install xz dpkg perl
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl git perl dpkg-dev clang lzma xz-utils
 
       - name: Set up Theos
         run: |
@@ -26,11 +27,12 @@ jobs:
           echo "THEOS=$HOME/theos" >> "$GITHUB_ENV"
           echo "THEOS_MAKE_PATH=$HOME/theos/makefiles" >> "$GITHUB_ENV"
 
-      - name: Set up iOS SDK
+      - name: Set up iPhone SDK path
         run: |
           mkdir -p "$HOME/theos/sdks"
-          XCODE_SDK=$(xcrun --sdk iphoneos --show-sdk-path)
-          ln -sf "$XCODE_SDK" "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
+          if [ -d /usr/share/iphoneos-sdk ]; then
+            ln -sf /usr/share/iphoneos-sdk "$HOME/theos/sdks/iPhoneOS16.7.sdk" || true
+          fi
 
       - name: Build Package
         env:
